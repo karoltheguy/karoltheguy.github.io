@@ -1,0 +1,134 @@
+---
+layout: default
+title: Docker Command Converter
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for better aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Basic styling for textareas to ensure consistent appearance */
+        textarea {
+            resize: vertical; /* Allow vertical resizing */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Docker Command Converter</h1>
+
+        <!-- Input Type Selection -->
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2">
+                Choose Input Type:
+            </label>
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center">
+                    <input
+                        type="radio"
+                        id="inputTypeRun"
+                        name="inputType"
+                        value="dockerRun"
+                        class="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                        checked
+                    >
+                    <label for="inputTypeRun" class="ml-2 text-gray-700">Docker Run Command</label>
+                </div>
+                <div class="flex items-center">
+                    <input
+                        type="radio"
+                        id="inputTypeCompose"
+                        name="inputType"
+                        value="dockerCompose"
+                        class="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                    >
+                    <label for="inputTypeCompose" class="ml-2 text-gray-700">Docker Compose</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="mb-6">
+            <label for="dockerInput" class="block text-gray-700 text-sm font-medium mb-2">
+                Paste your command/compose file here:
+            </label>
+            <textarea
+                id="dockerInput"
+                rows="10"
+                class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                placeholder="e.g., docker run -p 80:80 nginx or your docker-compose.yml content"
+            ></textarea>
+        </div>
+
+        <!-- Convert Button -->
+        <div class="flex justify-center mb-6">
+            <button
+                id="convertButton"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+            >
+                Convert
+            </button>
+        </div>
+
+        <!-- Result Section -->
+        <div>
+            <label for="resultOutput" class="block text-gray-700 text-sm font-medium mb-2">
+                Conversion Result:
+            </label>
+            <textarea
+                id="resultOutput"
+                rows="10"
+                class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200"
+                readonly
+                placeholder="Your converted command will appear here..."
+            ></textarea>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', function() {
+            const dockerInput = document.getElementById('dockerInput').value;
+            let convertedResult = '';
+
+            // Get the selected input type from the radio buttons
+            const selectedInputType = document.querySelector('input[name="inputType"]:checked').value;
+
+            // --- PASTE YOUR CONVERSION LOGIC HERE ---
+            // Use 'selectedInputType' to determine how to process 'dockerInput'
+            if (selectedInputType === 'dockerRun') {
+                // Your logic for converting a Docker Run command
+                convertedResult = 'Processing Docker Run command: \n\n' + dockerInput + '\n\n(Your specific Docker Run to X conversion logic goes here)';
+            } else if (selectedInputType === 'dockerCompose') {
+                // Your logic for converting a Docker Compose file
+                convertedResult = 'Processing Docker Compose file: \n\n' + dockerInput + '\n\n(Your specific Docker Compose to Y conversion logic goes here)';
+            } else {
+                convertedResult = 'Please select an input type.';
+            }
+            // --- END OF YOUR CONVERSION LOGIC ---
+
+            document.getElementById('resultOutput').value = convertedResult;
+        });
+
+        // Optional: Update placeholder text based on radio button selection
+        document.querySelectorAll('input[name="inputType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const inputTextArea = document.getElementById('dockerInput');
+                if (this.value === 'dockerRun') {
+                    inputTextArea.placeholder = 'e.g., docker run -p 80:80 nginx --name my-nginx';
+                } else {
+                    inputTextArea.placeholder = 'e.g., version: \'3.8\'\nservices:\n  web:\n    image: nginx';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
