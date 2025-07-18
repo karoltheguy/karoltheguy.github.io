@@ -6,11 +6,6 @@
 import { Container } from './container.js';
 import { QuadletGenerator } from './quadlet-generator.js';
 import { ComposeParser } from './compose-parser.js';
-import { 
-  Unit, Service, Install, Globals, 
-  Volume, PortMapping, Environment, Label,
-  ContainerUtils, NotifyOptions, PullPolicy, AutoUpdate, RestartPolicy
-} from './types.js';
 import { createRequire } from 'module';
 import yaml from 'yaml';
 
@@ -24,7 +19,6 @@ export class PodletJS {
   constructor() {
     this.composeParser = new ComposeParser();
     this.quadletGenerator = new QuadletGenerator();
-    this.containerUtils = ContainerUtils;
   }
 
   /**
@@ -73,7 +67,7 @@ export class PodletJS {
           'no': 'no',
           'always': 'always',
           'on-failure': 'on-failure',
-          'unless-stopped': 'always'
+          'unless-stopped': 'unless-stopped'
         };
         const restart = restartMap[container._restart];
         if (restart !== undefined) {
@@ -177,21 +171,9 @@ export function createPodlet() {
 export {
   Container,
   QuadletGenerator,
-  ComposeParser,
-  Unit,
-  Service, 
-  Install,
-  Globals,
-  Volume,
-  PortMapping,
-  Environment,
-  Label,
-  ContainerUtils,
-  NotifyOptions,
-  PullPolicy,
-  AutoUpdate,
-  RestartPolicy
+  ComposeParser
 };
+
 
 // Default export
 export default PodletJS;

@@ -6,7 +6,6 @@
 
 import yaml from 'js-yaml';
 import { Container } from './container.js';
-import { Volume, PortMapping, Environment, Label } from './types.js';
 
 /**
  * Main parser class for docker-compose files
