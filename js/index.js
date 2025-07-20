@@ -6,11 +6,8 @@
 import { Container } from './container.js';
 import { QuadletGenerator } from './quadlet-generator.js';
 import { ComposeParser } from './compose-parser.js';
-import { createRequire } from 'module';
+import composerize from 'composerize';
 import yaml from 'yaml';
-
-const require = createRequire(import.meta.url);
-const composerize = require('composerize');
 
 /**
  * Main PodletJS class - entry point for all transformations

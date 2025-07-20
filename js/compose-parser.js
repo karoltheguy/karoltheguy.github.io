@@ -4,7 +4,7 @@
  * Based on the Rust implementation from podlet
  */
 
-import yaml from 'js-yaml';
+import yaml from 'yaml';
 import { Container } from './container.js';
 
 /**
@@ -20,7 +20,7 @@ export class ComposeParser {
    * Parse a compose YAML content into Container objects
    */
   parse(yamlContent) {
-    const compose = yaml.load(yamlContent);
+    const compose = yaml.parse(yamlContent);
     
     if (!compose || typeof compose !== 'object') {
       throw new Error('Invalid compose file format');
