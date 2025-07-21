@@ -20,6 +20,11 @@
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Docker Command Converter</h1>
+        
+        <!-- Attribution notice -->
+        <div class="text-sm text-gray-600 mb-4 text-center">
+            Powered by <a href="https://github.com/karoltheguy/podletjs" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">PodletJS</a> and <a href="https://github.com/magicmark/composerize" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Composerize</a>
+        </div>
 
         <!-- Input Type Selection -->
         <div class="mb-4">
@@ -89,28 +94,52 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('convertButton').addEventListener('click', function() {
-            const dockerInput = document.getElementById('dockerInput').value;
-            let convertedResult = '';
+    <script type="module">
+        import { createPodlet } from './js/index.js'; // Make sure this path is correct
+        
+        // Create PodletJS instance
+        let podlet;
+        try {
+            podlet = createPodlet();
+        } catch (error) {
+            console.error('Failed to initialize PodletJS:', error);
+            document.getElementById('resultOutput').value = 'Error: Failed to load PodletJS library';
+        }
 
-            // Get the selected input type from the radio buttons
-            const selectedInputType = document.querySelector('input[name="inputType"]:checked').value;
-
-            // --- PASTE YOUR CONVERSION LOGIC HERE ---
-            // Use 'selectedInputType' to determine how to process 'dockerInput'
-            if (selectedInputType === 'dockerRun') {
-                // Your logic for converting a Docker Run command
-                convertedResult = 'Processing Docker Run command: \n\n' + dockerInput + '\n\n(Your specific Docker Run to X conversion logic goes here)';
-            } else if (selectedInputType === 'dockerCompose') {
-                // Your logic for converting a Docker Compose file
-                convertedResult = 'Processing Docker Compose file: \n\n' + dockerInput + '\n\n(Your specific Docker Compose to Y conversion logic goes here)';
-            } else {
-                convertedResult = 'Please select an input type.';
+        document.getElementById('convertButton').addEventListener('click', async function() {
+            const dockerInput = document.getElementById('dockerInput').value.trim();
+            const resultOutput = document.getElementById('resultOutput');
+            
+            if (!dockerInput) {
+                resultOutput.value = 'Please enter a command or compose file content';
+                return;
             }
-            // --- END OF YOUR CONVERSION LOGIC ---
 
-            document.getElementById('resultOutput').value = convertedResult;
+            if (!podlet) {
+                resultOutput.value = 'Error: PodletJS library not loaded';
+                return;
+            }
+
+            try {
+                const selectedInputType = document.querySelector('input[name="inputType"]:checked').value;
+                let convertedResult = '';
+
+                if (selectedInputType === 'dockerRun') {
+                    // Convert Docker run command to Quadlet
+                    convertedResult = podlet.dockerRunToQuadlet(dockerInput);
+                } else if (selectedInputType === 'dockerCompose') {
+                    // Convert Docker compose to Quadlet
+                    const results = podlet.composeToQuadlet(dockerInput);
+                    // Format multiple results
+                    convertedResult = results.map(result =>
+                        `# ${result.filename}\n${result.content}\n`
+                    ).join('\n');
+                }
+
+                resultOutput.value = convertedResult;
+            } catch (error) {
+                resultOutput.value = `Error during conversion: ${error.message}`;
+            }
         });
 
         // Optional: Update placeholder text based on radio button selection
