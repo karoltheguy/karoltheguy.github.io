@@ -56,6 +56,31 @@
             </div>
         </div>
 
+        <!-- Conversion Options -->
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-medium mb-2">
+                Quadlet Options:
+            </label>
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="unitOption"
+                        class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                    >
+                    <label for="unitOption" class="ml-2 text-gray-700">Unit (description)</label>
+                </div>
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        id="installOption"
+                        class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                    >
+                    <label for="installOption" class="ml-2 text-gray-700">Install (service config)</label>
+                </div>
+            </div>
+        </div>
+
         <!-- Input Section -->
         <div class="mb-6">
             <label for="dockerInput" class="block text-gray-700 text-sm font-medium mb-2">
@@ -93,18 +118,11 @@
             ></textarea>
         </div>
     </div>
-
-    <script type="module">
-        import { createPodlet } from './js/index.js'; // Make sure this path is correct
-        
+     
+     <script src="./js/podletjs.js"></script>
+     <script>
         // Create PodletJS instance
-        let podlet;
-        try {
-            podlet = createPodlet();
-        } catch (error) {
-            console.error('Failed to initialize PodletJS:', error);
-            document.getElementById('resultOutput').value = 'Error: Failed to load PodletJS library';
-        }
+        let podlet = new window.PodletJS.default();
 
         document.getElementById('convertButton').addEventListener('click', async function() {
             const dockerInput = document.getElementById('dockerInput').value.trim();
@@ -124,12 +142,35 @@
                 const selectedInputType = document.querySelector('input[name="inputType"]:checked').value;
                 let convertedResult = '';
 
+                // Collect checkbox options
+                const unitChecked = document.getElementById('unitOption').checked;
+                const installChecked = document.getElementById('installOption').checked;
+                
+                // Build options object based on checkbox selections
+                const options = {};
+                
+                if (unitChecked) {
+                    options.unit = {
+                        description: "My custom service description",
+                        after: ["network.target", "podman.service"],
+                        wants: ["network.target"],
+                        requires: ["some-dependency.service"]
+                    };
+                }
+                
+                if (installChecked) {
+                    options.service = {
+                        Restart: "always",
+                        RestartSec: "10"
+                    };
+                }
+
                 if (selectedInputType === 'dockerRun') {
                     // Convert Docker run command to Quadlet
-                    convertedResult = podlet.dockerRunToQuadlet(dockerInput);
+                    convertedResult = podlet.dockerRunToQuadlet(dockerInput, options);
                 } else if (selectedInputType === 'dockerCompose') {
                     // Convert Docker compose to Quadlet
-                    const results = podlet.composeToQuadlet(dockerInput);
+                    const results = podlet.composeToQuadlet(dockerInput, options);
                     // Format multiple results
                     convertedResult = results.map(result =>
                         `# ${result.filename}\n${result.content}\n`
